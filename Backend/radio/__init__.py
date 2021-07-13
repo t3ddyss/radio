@@ -1,7 +1,7 @@
 from flask import Flask
 
 from radio.extensions import db, migrate
-from radio import admin, audios
+from radio import admin, tracks, playlists
 
 
 def create_app(config_filename='config.py'):
@@ -22,4 +22,5 @@ def register_extensions(app):
 
 def register_blueprints(app):
     app.register_blueprint(admin.commands.blueprint)
-    app.register_blueprint(audios.views.blueprint)
+    app.register_blueprint(playlists.views.blueprint)
+    app.register_blueprint(tracks.views.blueprint)
