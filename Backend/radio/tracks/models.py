@@ -16,11 +16,12 @@ class Track(db.Model):
     def get_uri(self):
         return f'{self.artist}_{self.title}_{self.id}.mp3'.replace(" ", "_")
 
-    def to_dict(self):
+    def to_dict(self, url_root):
         return {'id': self.id,
                 'artist': self.artist,
                 'title': self.title,
-                'length': self.length}
+                'length': self.length,
+                'url': url_root + "api/tracks/" + self.get_uri()}
 
     def to_str(self):
         return f'{self.artist} – {self.title}, {self.length}.'

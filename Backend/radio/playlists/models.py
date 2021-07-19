@@ -13,8 +13,7 @@ class Playlist(db.Model):
 
     def to_dict(self):
         return {'id': self.id,
-                'title': self.title,
-                'tracks': [track.to_dict() for track in self.tracks]}
+                'title': self.title}
 
     def to_str(self):
         return self.title

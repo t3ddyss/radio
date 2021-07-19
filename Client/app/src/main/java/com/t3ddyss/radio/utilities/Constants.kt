@@ -8,6 +8,9 @@ const val BASE_URL_DEVICE = "http://192.168.0.102:5000/"
 
 // Shared preferences keys
 
+// Bundle keys
+const val PLAYLIST_ID = "playlist_id"
+
 // SavedStateHandle keys
 
 // Debug
