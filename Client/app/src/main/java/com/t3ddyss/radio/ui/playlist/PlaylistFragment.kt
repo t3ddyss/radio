@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayoutMediator
+import com.t3ddyss.radio.R
 import com.t3ddyss.radio.adapters.CollectionAdapter
 import com.t3ddyss.radio.adapters.TracksAdapter
 import com.t3ddyss.radio.databinding.FragmentPlaylistBinding
@@ -78,7 +79,8 @@ class PlaylistFragment : Fragment() {
 
                 is Failed -> {
                     binding.layoutLoading.isVisible = false
-                    Toast.makeText(activity?.applicationContext, "You are offline", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity?.applicationContext,
+                        getString(R.string.no_connection), Toast.LENGTH_SHORT).show()
                 }
             }
         }

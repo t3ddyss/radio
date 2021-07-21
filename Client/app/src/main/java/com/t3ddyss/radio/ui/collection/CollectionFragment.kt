@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.tabs.TabLayoutMediator
+import com.t3ddyss.radio.R
 import com.t3ddyss.radio.adapters.CollectionAdapter
 import com.t3ddyss.radio.databinding.FragmentCollectionBinding
 import com.t3ddyss.radio.models.domain.Error
@@ -65,7 +66,7 @@ class CollectionFragment : Fragment() {
                 is Failed -> {
                     binding.layoutLoading.isVisible = false
 
-                    Toast.makeText(activity?.applicationContext, "You are offline", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity?.applicationContext, getString(R.string.no_connection), Toast.LENGTH_SHORT).show()
                 }
             }
         }
