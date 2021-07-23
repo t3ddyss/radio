@@ -48,8 +48,6 @@ class PlaylistFragment : Fragment() {
         )
         binding.listTracks.layoutManager = layoutManager
 
-        Log.d(DEBUG_TAG, parentFragment.toString())
-
         subscribeUi()
     }
 

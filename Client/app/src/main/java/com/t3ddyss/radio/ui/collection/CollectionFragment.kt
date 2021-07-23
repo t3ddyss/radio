@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.util.Preconditions
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -60,7 +61,7 @@ class CollectionFragment : Fragment() {
 
                 is Error -> {
                     binding.layoutLoading.isVisible = false
-                    Toast.makeText(activity?.applicationContext, result.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity?.applicationContext, result.message.toString(), Toast.LENGTH_SHORT).show()
                 }
 
                 is Failed -> {
