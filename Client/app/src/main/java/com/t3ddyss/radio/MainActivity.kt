@@ -8,10 +8,13 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.t3ddyss.radio.databinding.ActivityMainBinding
 import com.t3ddyss.radio.services.AudioPlaybackService
 import com.t3ddyss.radio.ui.collection.CollectionFragment
 import com.t3ddyss.radio.utilities.DEBUG_TAG
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -22,7 +25,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(DEBUG_TAG, "Service connected")
 
             if (service is AudioPlaybackService.AudioPlaybackServiceBinder) {
-                binding.playerView.player = service.getExoPlayerInstance()
+                binding.playerControlView.player = service.getExoPlayerInstance()
             }
         }
 
@@ -32,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_Radio)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

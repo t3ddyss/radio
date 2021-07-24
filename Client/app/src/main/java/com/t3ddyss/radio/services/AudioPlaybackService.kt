@@ -6,8 +6,11 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
+import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.MediaMetadata
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.t3ddyss.radio.utilities.AudioNotificationManager
@@ -29,11 +32,54 @@ class AudioPlaybackService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        exoPlayer = SimpleExoPlayer.Builder(this).build()
-        exoPlayer.setMediaItem(MediaItem.fromUri(getBaseUrlForCurrentDevice() +
-                "api/tracks/Dollkraut_Mastermaster_29.mp3"))
-        exoPlayer.playWhenReady = true
-        exoPlayer.prepare()
+        exoPlayer = SimpleExoPlayer.Builder(this).build().apply {
+//            addListener(object : Player.Listener {
+//                override fun onTracksChanged(
+//                    trackGroups: TrackGroupArray,
+//                    trackSelections: TrackSelectionArray
+//                ) {
+//                    for (i in 0 until trackGroups.length) {
+//                        val trackGroup = trackGroups.get(i)
+//                        for (j in 0 until trackGroup.length) {
+//                            val metadata: Metadata? = trackGroup.getFormat(j).metadata
+//                            if (metadata != null) {
+//                                for (n in 0 until metadata.length()) {
+//                                    when (val md = metadata[n]) {
+//                                        is com.google.android.exoplayer2.metadata.id3.TextInformationFrame -> {
+//                                        }
+//                                        else -> {
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            })
+
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(C.CONTENT_TYPE_MUSIC)
+                    .setUsage(C.USAGE_MEDIA)
+                    .build(),
+                true)
+
+            setHandleAudioBecomingNoisy(true)
+
+            setMediaItem(MediaItem.Builder()
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setArtist("Dollkraut")
+                        .setTitle("Mastermaster")
+                        .build()
+                )
+                .setUri(getBaseUrlForCurrentDevice() + "api/tracks/Dollkraut_Mastermaster_29.mp3")
+                .build())
+            pauseAtEndOfMediaItems
+
+            playWhenReady = true
+            prepare()
+        }
 
         mediaSession = MediaSessionCompat(this, "AudioPlaybackService").apply {
             isActive = true
@@ -42,7 +88,7 @@ class AudioPlaybackService : Service() {
         notificationManager = AudioNotificationManager(
             this,
             AudioNotificationListener(),
-            mediaSession.sessionToken
+            mediaSession
         )
 
         mediaSessionConnector = MediaSessionConnector(mediaSession)
@@ -52,16 +98,22 @@ class AudioPlaybackService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        exoPlayer.playWhenReady = true
         return AudioPlaybackServiceBinder()
-    }
-
-    inner class AudioPlaybackServiceBinder: Binder() {
-        fun getExoPlayerInstance() = exoPlayer
     }
 
     override fun onDestroy() {
         serviceScope.cancel()
+        notificationManager.hideNotification()
+        exoPlayer.release()
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        stopSelf()
+    }
+
+    inner class AudioPlaybackServiceBinder: Binder() {
+        fun getExoPlayerInstance() = exoPlayer
     }
 
     inner class AudioNotificationListener : PlayerNotificationManager.NotificationListener {

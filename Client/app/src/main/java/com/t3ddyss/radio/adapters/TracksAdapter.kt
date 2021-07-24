@@ -2,13 +2,11 @@ package com.t3ddyss.radio.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.graphics.toColor
 import androidx.recyclerview.widget.RecyclerView
 import com.t3ddyss.radio.R
 import com.t3ddyss.radio.databinding.ListItemTrackBinding
 import com.t3ddyss.radio.models.domain.Track
 import com.t3ddyss.radio.utilities.getThemeColor
-import com.t3ddyss.radio.utilities.toColorFilter
 
 class TracksAdapter(
     val tracks: List<Track>,
@@ -39,15 +37,15 @@ class TracksAdapter(
             with (binding) {
                 root.setOnClickListener {
                     clickListener.invoke(tracks[adapterPosition])
-                    audioIcon.colorFilter = root.context.getThemeColor(R.attr.colorPrimary).toColorFilter()
+                    textViewTitle.setTextColor(root.context.getThemeColor(R.attr.colorSecondary))
                 }
             }
         }
 
         fun bind(track: Track) = with (binding) {
-                textViewArtist.text = track.artist
-                textViewTitle.text = track.title
-                textViewLength.text = track.length
-            }
+            textViewArtist.text = track.artist
+            textViewTitle.text = track.title
+            textViewLength.text = track.length
+        }
     }
 }

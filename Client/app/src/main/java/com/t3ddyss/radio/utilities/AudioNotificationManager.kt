@@ -3,6 +3,7 @@ package com.t3ddyss.radio.utilities
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.support.v4.media.session.MediaSessionCompat
 import com.google.android.exoplayer2.DefaultControlDispatcher
 import com.google.android.exoplayer2.Player
@@ -16,7 +17,7 @@ const val NOW_PLAYING_NOTIFICATION_ID = 1337 // Random number
 class AudioNotificationManager(
     context: Context,
     notificationListener: AudioPlaybackService.AudioNotificationListener,
-    sessionToken: MediaSessionCompat.Token
+    private val mediaSession: MediaSessionCompat
 ) {
     private val notificationManager= PlayerNotificationManager
         .Builder(
@@ -28,9 +29,11 @@ class AudioNotificationManager(
         .setChannelDescriptionResourceId(R.string.notification_channel_description)
         .setNotificationListener(notificationListener)
         .build().apply {
-            setMediaSessionToken(sessionToken)
+            setMediaSessionToken(mediaSession.sessionToken)
             setSmallIcon(R.drawable.ic_audiotrack)
             setControlDispatcher(DefaultControlDispatcher(0, 0))
+            setUseStopAction(true)
+            setUsePlayPauseActions(true)
         }
 
     fun hideNotification() {
@@ -45,9 +48,13 @@ class AudioNotificationManager(
 
         override fun createCurrentContentIntent(player: Player): PendingIntent? = null
 
-        override fun getCurrentContentText(player: Player) = "Context text"
+        override fun getCurrentContentText(player: Player): CharSequence {
+            return player.currentMediaItem?.mediaMetadata?.artist ?: "No content text"
+        }
 
-        override fun getCurrentContentTitle(player: Player) = "Content title"
+        override fun getCurrentContentTitle(player: Player): CharSequence {
+            return player.currentMediaItem?.mediaMetadata?.title ?: "No content title"
+        }
 
         override fun getCurrentLargeIcon(
             player: Player,

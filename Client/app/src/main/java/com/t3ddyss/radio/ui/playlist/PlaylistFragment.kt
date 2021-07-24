@@ -17,6 +17,7 @@ import com.t3ddyss.radio.adapters.CollectionAdapter
 import com.t3ddyss.radio.adapters.TracksAdapter
 import com.t3ddyss.radio.databinding.FragmentPlaylistBinding
 import com.t3ddyss.radio.models.domain.*
+import com.t3ddyss.radio.ui.collection.CollectionFragment
 import com.t3ddyss.radio.utilities.DEBUG_TAG
 import com.t3ddyss.radio.utilities.PLAYLIST_ID
 
@@ -63,11 +64,14 @@ class PlaylistFragment : Fragment() {
 
                 is Success<List<Track>> -> {
                     binding.layoutLoading.isVisible = false
+
                     adapter = TracksAdapter(result.content!!) {
                         Toast.makeText(activity?.applicationContext, "Clicked track ${it.title}",
                         Toast.LENGTH_SHORT).show()
                     }
                     binding.listTracks.adapter = adapter
+
+                    (parentFragment as? CollectionFragment)?.hideLoadingIndicator()
                 }
 
                 is Error -> {

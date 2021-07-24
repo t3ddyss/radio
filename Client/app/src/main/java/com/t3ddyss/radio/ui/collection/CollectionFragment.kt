@@ -9,6 +9,7 @@ import androidx.core.util.Preconditions
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import com.google.android.material.tabs.TabLayoutMediator
 import com.t3ddyss.radio.R
 import com.t3ddyss.radio.adapters.CollectionAdapter
@@ -44,14 +45,18 @@ class CollectionFragment : Fragment() {
         _binding = null
     }
 
+    fun hideLoadingIndicator() {
+        if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+            binding.layoutLoading.isVisible = false
+        }
+    }
+
     private fun subscribeUi() {
         viewModel.playlists.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Loading -> binding.layoutLoading.isVisible = true
 
                 is Success<List<Playlist>> -> {
-                    binding.layoutLoading.isVisible = false
-
                     adapter = CollectionAdapter(this, result.content!!)
                     binding.viewPager.adapter = adapter
                     TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
@@ -66,7 +71,6 @@ class CollectionFragment : Fragment() {
 
                 is Failed -> {
                     binding.layoutLoading.isVisible = false
-
                     Toast.makeText(activity?.applicationContext, getString(R.string.no_connection), Toast.LENGTH_SHORT).show()
                 }
             }
