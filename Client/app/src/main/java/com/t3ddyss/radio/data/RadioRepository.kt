@@ -21,7 +21,9 @@ class RadioRepository @Inject constructor(
 
     suspend fun getPlaylistTracks(playlistId: Int): Resource<List<Track>> {
         return handleNetworkException {
-            Success(service.getPlaylistTracks(playlistId).map { mapTrackDtoToTDomain(it) })
+            Success(service.getPlaylistTracks(playlistId)
+                .map { mapTrackDtoToTDomain(it) }
+            )
         }
     }
 }

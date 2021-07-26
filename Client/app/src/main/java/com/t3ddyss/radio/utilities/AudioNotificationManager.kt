@@ -34,6 +34,9 @@ class AudioNotificationManager(
             setControlDispatcher(DefaultControlDispatcher(0, 0))
             setUseStopAction(true)
             setUsePlayPauseActions(true)
+            setColorized(true)
+            setColor(Color.GREEN)
+//            setColor(context.getThemeColor(R.attr.colorSecondary))
         }
 
     fun hideNotification() {

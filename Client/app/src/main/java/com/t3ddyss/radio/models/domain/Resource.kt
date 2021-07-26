@@ -1,11 +1,7 @@
 package com.t3ddyss.radio.models.domain
 
-sealed class Resource<T>(
-    val content: T? = null,
-    val message: String? = null
-)
-
-class Loading<T>(content: T? = null) : Resource<T>(content)
-class Success<T>(content: T) : Resource<T>(content)
-class Error<T>(message: String?, content: T? = null) : Resource<T>(content, message)
+sealed class Resource<T>
+class Loading<T>(val content: T? = null) : Resource<T>()
+class Success<T>(val content: T) : Resource<T>()
+class Error<T>(val message: String?) : Resource<T>()
 class Failed<T> : Resource<T>()

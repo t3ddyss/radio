@@ -14,4 +14,6 @@
     <!-- Error messages -->
     <string name="generic_error">The application has encountered an unexpected error.</string>
     <string name="no_connection">You are offline</string>
+    <string name="empty_playlist">Playlist is empty</string>
+    <string name="unknown_error">Unknown error</string>
 </resources>

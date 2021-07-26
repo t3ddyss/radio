@@ -18,7 +18,7 @@ inline fun <ResultType> handleNetworkException(
 } catch (ex: ConnectException) {
     Failed()
 } catch (ex: SocketTimeoutException) {
-    Error(null)
+    Failed()
 }
 
 fun <T> handleHttpException(ex: HttpException): Error<T> {

@@ -5,5 +5,6 @@ data class Track(
     val artist: String,
     val title: String,
     val length: String,
-    val url: String
+    val url: String,
+    var isPlaying: Boolean = false
 )

@@ -57,7 +57,7 @@ class CollectionFragment : Fragment() {
                 is Loading -> binding.layoutLoading.isVisible = true
 
                 is Success<List<Playlist>> -> {
-                    adapter = CollectionAdapter(this, result.content!!)
+                    adapter = CollectionAdapter(this, result.content)
                     binding.viewPager.adapter = adapter
                     TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
                         tab.text = result.content[position].title
@@ -66,7 +66,11 @@ class CollectionFragment : Fragment() {
 
                 is Error -> {
                     binding.layoutLoading.isVisible = false
-                    Toast.makeText(activity?.applicationContext, result.message.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity?.applicationContext,
+                        result.message ?: getString(R.string.unknown_error),
+                        Toast.LENGTH_SHORT)
+                        .show()
                 }
 
                 is Failed -> {

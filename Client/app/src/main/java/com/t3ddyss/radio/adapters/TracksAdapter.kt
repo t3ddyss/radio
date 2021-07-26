@@ -9,8 +9,8 @@ import com.t3ddyss.radio.models.domain.Track
 import com.t3ddyss.radio.utilities.getThemeColor
 
 class TracksAdapter(
-    val tracks: List<Track>,
-    val clickListener: (Track) -> Unit
+    private val tracks: List<Track>,
+    val clickListener: (Int) -> Unit
 ) : RecyclerView.Adapter<TracksAdapter.TrackViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
@@ -29,16 +29,35 @@ class TracksAdapter(
 
     override fun getItemCount() = tracks.size
 
+    fun resetPlayingTrack() {
+        tracks.forEachIndexed { index, track ->
+            if (track.isPlaying) {
+                track.isPlaying = false
+                notifyItemChanged(index)
+            }
+        }
+    }
+
+    fun setPlayingTrack(trackId: Int) {
+        resetPlayingTrack()
+
+        tracks
+            .withIndex()
+            .find {
+                it.value.id == trackId
+            }?.let {
+                it.value.isPlaying = true
+                notifyItemChanged(it.index)
+            }
+    }
+
     inner class TrackViewHolder(
         private val binding: ListItemTrackBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         init {
-            with (binding) {
-                root.setOnClickListener {
-                    clickListener.invoke(tracks[adapterPosition])
-                    textViewTitle.setTextColor(root.context.getThemeColor(R.attr.colorSecondary))
-                }
+            binding.root.setOnClickListener {
+                clickListener.invoke(adapterPosition)
             }
         }
 
@@ -46,6 +65,18 @@ class TracksAdapter(
             textViewArtist.text = track.artist
             textViewTitle.text = track.title
             textViewLength.text = track.length
+
+            if (track.isPlaying) {
+                textViewTitle.setTextColor(root.context.getThemeColor(R.attr.colorSecondary))
+                textViewArtist.setTextColor(root.context.getThemeColor(R.attr.colorSecondary))
+                textViewLength.setTextColor(root.context.getThemeColor(R.attr.colorSecondary))
+            }
+
+            else {
+                textViewTitle.setTextColor(root.context.getThemeColor(R.attr.colorOnPrimary))
+                textViewArtist.setTextColor(root.context.getThemeColor(R.attr.colorOnPrimary))
+                textViewLength.setTextColor(root.context.getThemeColor(R.attr.colorOnPrimary))
+            }
         }
     }
 }
