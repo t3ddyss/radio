@@ -58,6 +58,8 @@ class CollectionFragment : Fragment() {
 
                 is Success<List<Playlist>> -> {
                     adapter = CollectionAdapter(this, result.content)
+
+                    binding.tabLayout.isVisible = true
                     binding.viewPager.adapter = adapter
                     TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
                         tab.text = result.content[position].title

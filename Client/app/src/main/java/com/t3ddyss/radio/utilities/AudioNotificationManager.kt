@@ -24,7 +24,7 @@ class AudioNotificationManager(
             context,
             NOW_PLAYING_NOTIFICATION_ID,
             NOW_PLAYING_CHANNEL_ID,
-            AudioDescriptionAdapter())
+            AudioDescriptionAdapter(context))
         .setChannelNameResourceId(R.string.notification_channel)
         .setChannelDescriptionResourceId(R.string.notification_channel_description)
         .setNotificationListener(notificationListener)
@@ -34,9 +34,6 @@ class AudioNotificationManager(
             setControlDispatcher(DefaultControlDispatcher(0, 0))
             setUseStopAction(true)
             setUsePlayPauseActions(true)
-            setColorized(true)
-            setColor(Color.GREEN)
-//            setColor(context.getThemeColor(R.attr.colorSecondary))
         }
 
     fun hideNotification() {
@@ -47,16 +44,18 @@ class AudioNotificationManager(
         notificationManager.setPlayer(player)
     }
 
-    private inner class AudioDescriptionAdapter : PlayerNotificationManager.MediaDescriptionAdapter {
+    private inner class AudioDescriptionAdapter(
+        private val context: Context
+    ) : PlayerNotificationManager.MediaDescriptionAdapter {
 
         override fun createCurrentContentIntent(player: Player): PendingIntent? = null
 
         override fun getCurrentContentText(player: Player): CharSequence {
-            return player.currentMediaItem?.mediaMetadata?.artist ?: "No content text"
+            return player.currentMediaItem?.mediaMetadata?.artist ?: context.getString(R.string.unknown_artist)
         }
 
         override fun getCurrentContentTitle(player: Player): CharSequence {
-            return player.currentMediaItem?.mediaMetadata?.title ?: "No content title"
+            return player.currentMediaItem?.mediaMetadata?.title ?: context.getString(R.string.unknown_track)
         }
 
         override fun getCurrentLargeIcon(

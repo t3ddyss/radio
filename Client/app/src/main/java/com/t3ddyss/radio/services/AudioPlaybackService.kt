@@ -7,6 +7,7 @@ import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
+import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
@@ -14,6 +15,8 @@ import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
+import com.google.android.exoplayer2.upstream.HttpDataSource
+import com.t3ddyss.radio.R
 import com.t3ddyss.radio.models.domain.PlaylistAndTrack
 import com.t3ddyss.radio.models.domain.Track
 import com.t3ddyss.radio.utilities.*
@@ -23,9 +26,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 
 class AudioPlaybackService : Service() {
-    private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-
     private lateinit var exoPlayer: SimpleExoPlayer
+    val player get() = exoPlayer
 
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaSessionConnector: MediaSessionConnector
@@ -40,17 +42,33 @@ class AudioPlaybackService : Service() {
                     trackGroups: TrackGroupArray,
                     trackSelections: TrackSelectionArray
                 ) {
-                    exoPlayer.currentMediaItem?.mediaMetadata?.extras?.let {
-                        val intent = Intent(PLAYING_TRACK_CHANGED).apply {
+                    val intent = Intent(PLAYING_TRACK_CHANGED).apply {
+                        exoPlayer.currentMediaItem?.mediaMetadata?.extras?.let {
                             putExtras(it)
                         }
-
-                        LocalBroadcastManager
-                            .getInstance(this@AudioPlaybackService)
-                            .sendBroadcast(intent)
                     }
+
+                    LocalBroadcastManager
+                        .getInstance(this@AudioPlaybackService)
+                        .sendBroadcast(intent)
+                }
+
+                override fun onPlayerError(error: ExoPlaybackException) {
+                    if (error.type == ExoPlaybackException.TYPE_SOURCE &&
+                        error.sourceException is HttpDataSource.HttpDataSourceException) {
+                        Toast
+                            .makeText(applicationContext, R.string.no_connection, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                    exoPlayer.clearMediaItems()
+
+                    // Extras are null to indicate that no tracks are playing right now
+                    LocalBroadcastManager
+                        .getInstance(this@AudioPlaybackService)
+                        .sendBroadcast(Intent(PLAYING_TRACK_CHANGED))
                 }
             })
+
             setAudioAttributes(
                 AudioAttributes.Builder()
                     .setContentType(C.CONTENT_TYPE_MUSIC)
@@ -62,7 +80,7 @@ class AudioPlaybackService : Service() {
             playWhenReady = true
         }
 
-        mediaSession = MediaSessionCompat(applicationContext, "AudioPlaybackService").apply {
+        mediaSession = MediaSessionCompat(applicationContext, this::class.java.simpleName).apply {
             isActive = true
         }
 
@@ -70,7 +88,7 @@ class AudioPlaybackService : Service() {
         mediaSessionConnector.setPlayer(exoPlayer)
 
         notificationManager = AudioNotificationManager(
-            this,
+            applicationContext,
             AudioNotificationListener(),
             mediaSession
         )
@@ -81,8 +99,9 @@ class AudioPlaybackService : Service() {
     }
 
     override fun onDestroy() {
-        serviceScope.cancel()
         notificationManager.hideNotification()
+
+        // Removes event listeners as well
         exoPlayer.release()
     }
 
@@ -90,8 +109,6 @@ class AudioPlaybackService : Service() {
         super.onTaskRemoved(rootIntent)
         stopSelf()
     }
-
-    fun getExoPlayer() = exoPlayer
 
     fun setTracksAndPlay(tracks: List<Track>, startIndex: Int, playlistId: Int) {
         exoPlayer.setMediaItems(
@@ -113,7 +130,6 @@ class AudioPlaybackService : Service() {
                             )
                             .build()
                     )
-                    .setMediaId(it.id.toString())
                     .setUri(it.url)
                     .build()
             },
@@ -126,7 +142,7 @@ class AudioPlaybackService : Service() {
     }
 
     inner class AudioPlaybackServiceBinder: Binder() {
-        fun getService() = this@AudioPlaybackService
+        val service get() = this@AudioPlaybackService
     }
 
     inner class AudioNotificationListener : PlayerNotificationManager.NotificationListener {
@@ -140,7 +156,6 @@ class AudioPlaybackService : Service() {
 
         override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
             stopForeground(true)
-            stopSelf()
         }
     }
 }

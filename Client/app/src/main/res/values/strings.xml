@@ -16,4 +16,6 @@
     <string name="no_connection">You are offline</string>
     <string name="empty_playlist">Playlist is empty</string>
     <string name="unknown_error">Unknown error</string>
+    <string name="unknown_artist">Unknown artist</string>
+    <string name="unknown_track">Unknown track</string>
 </resources>

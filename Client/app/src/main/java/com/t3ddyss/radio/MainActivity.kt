@@ -3,16 +3,13 @@ package com.t3ddyss.radio
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.t3ddyss.radio.databinding.ActivityMainBinding
-import com.t3ddyss.radio.models.domain.PlaylistAndTrack
 import com.t3ddyss.radio.models.domain.Track
 import com.t3ddyss.radio.services.AudioPlaybackService
 import com.t3ddyss.radio.ui.collection.CollectionFragment
-import com.t3ddyss.radio.utilities.DEBUG_TAG
 import com.t3ddyss.radio.utilities.PLAYING_TRACK_CHANGED
 import com.t3ddyss.radio.utilities.PLAYLIST_AND_TRACK
 
@@ -28,16 +25,17 @@ class MainActivity : AppCompatActivity() {
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            Log.d(DEBUG_TAG, "Service connected")
-
             if (service is AudioPlaybackService.AudioPlaybackServiceBinder) {
-                this@MainActivity.service = service.getService()
-                binding.playerControlView.player = this@MainActivity.service.getExoPlayer()
+                this@MainActivity.service = service.service
+                val player = this@MainActivity.service.player
+                binding.playerControlView.player = player
+
+                viewModel.updateCurrentlyPlayingTrack(
+                    player.currentMediaItem?.mediaMetadata?.extras?.getParcelable(PLAYLIST_AND_TRACK))
             }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            Log.d(DEBUG_TAG, "Service disconnected")
         }
     }
 
@@ -74,8 +72,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-
         unbindService(connection)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         LocalBroadcastManager
             .getInstance(this)
             .unregisterReceiver(receiver)
@@ -88,11 +89,9 @@ class MainActivity : AppCompatActivity() {
 
     inner class TrackChangedBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            Log.d(DEBUG_TAG, "Got broadcast")
-
-            intent?.extras?.getParcelable<PlaylistAndTrack>(PLAYLIST_AND_TRACK)?.let {
-                viewModel.updateCurrentlyPlayingTrack(it)
-            }
+            viewModel.updateCurrentlyPlayingTrack(
+                intent?.extras?.getParcelable(PLAYLIST_AND_TRACK)
+            )
         }
     }
 }

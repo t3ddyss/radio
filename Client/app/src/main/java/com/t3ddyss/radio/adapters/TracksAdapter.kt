@@ -30,12 +30,14 @@ class TracksAdapter(
     override fun getItemCount() = tracks.size
 
     fun resetPlayingTrack() {
-        tracks.forEachIndexed { index, track ->
-            if (track.isPlaying) {
-                track.isPlaying = false
-                notifyItemChanged(index)
+        tracks
+            .withIndex()
+            .find {
+                it.value.isPlaying
+            }?.let {
+                it.value.isPlaying = false
+                notifyItemChanged(it.index)
             }
-        }
     }
 
     fun setPlayingTrack(trackId: Int) {

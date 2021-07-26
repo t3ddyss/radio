@@ -9,7 +9,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.t3ddyss.radio.MainActivity
 import com.t3ddyss.radio.PlaybackViewModel
 import com.t3ddyss.radio.R
@@ -52,6 +54,12 @@ class PlaylistFragment : Fragment() {
             false
         )
         binding.listTracks.layoutManager = layoutManager
+        val itemAnimator: DefaultItemAnimator = object : DefaultItemAnimator() {
+            override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
+                return true
+            }
+        }
+        binding.listTracks.itemAnimator = itemAnimator
 
         subscribeUi()
     }
@@ -62,6 +70,16 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun subscribeUi() {
+        fun indicatePlayingTrack(playlistAndTrack: PlaylistAndTrack?) {
+            if (playlistAndTrack != null && playlistAndTrack.playlistId == playlistId) {
+                adapter.setPlayingTrack(playlistAndTrack.trackId)
+            }
+
+            else {
+                adapter.resetPlayingTrack()
+            }
+        }
+
         viewModel.tracks.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Loading -> binding.layoutLoading.isVisible = true
@@ -79,6 +97,7 @@ class PlaylistFragment : Fragment() {
                         )
                     }
                     binding.listTracks.adapter = adapter
+                    indicatePlayingTrack(playbackViewModel.currentlyPlayingTrack.value)
 
                     (parentFragment as? CollectionFragment)?.hideLoadingIndicator()
                 }
@@ -101,15 +120,8 @@ class PlaylistFragment : Fragment() {
         }
 
         playbackViewModel.currentlyPlayingTrack.observe(viewLifecycleOwner) {
-            if (this::adapter.isInitialized) {
-                if (playlistId == it.playlistId) {
-                    adapter.setPlayingTrack(it.trackId)
-                }
-
-                else {
-                    adapter.resetPlayingTrack()
-                }
-            }
+            if (!this::adapter.isInitialized) return@observe
+            indicatePlayingTrack(it)
         }
     }
 
