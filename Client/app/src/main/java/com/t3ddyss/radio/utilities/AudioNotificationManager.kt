@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
 import android.support.v4.media.session.MediaSessionCompat
+import androidx.core.app.NotificationCompat
 import com.google.android.exoplayer2.DefaultControlDispatcher
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
@@ -28,6 +29,7 @@ class AudioNotificationManager(
         .setChannelDescriptionResourceId(R.string.notification_channel_description)
         .setNotificationListener(notificationListener)
         .build().apply {
+            setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             setMediaSessionToken(mediaSession.sessionToken)
             setSmallIcon(R.drawable.ic_audiotrack)
             setControlDispatcher(DefaultControlDispatcher(0, 0))
