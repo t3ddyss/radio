@@ -64,16 +64,6 @@
         android:paddingStart="10dp"
         android:paddingEnd="10dp">
 
-        <TextView
-            android:id="@id/exo_position"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:textColor="?attr/colorSecondary"
-            android:textSize="14sp" />
-
         <com.google.android.exoplayer2.ui.DefaultTimeBar
             android:id="@id/exo_progress"
             android:layout_width="0dp"
@@ -83,15 +73,38 @@
             app:buffered_color="@color/orange_light"
             app:unplayed_color="@color/grey_500"
             app:scrubber_color="?attr/colorSecondary"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
 
         <TextView
-            android:id="@id/exo_duration"
-            android:layout_width="wrap_content"
+            android:id="@id/exo_position"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_weight="1"
             android:includeFontPadding="false"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:textColor="?attr/colorSecondary"
-            android:textSize="14sp" />
+            android:textSize="@dimen/text_size_micro" />
+
+        <TextView
+            android:id="@id/exo_duration"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:layout_weight="1"
+            android:includeFontPadding="false"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:textColor="?attr/colorSecondary"
+            android:textSize="@dimen/text_size_micro" />
     </LinearLayout>
 </LinearLayout>

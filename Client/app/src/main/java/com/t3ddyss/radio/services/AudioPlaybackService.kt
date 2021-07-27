@@ -20,10 +20,7 @@ import com.t3ddyss.radio.R
 import com.t3ddyss.radio.models.domain.PlaylistAndTrack
 import com.t3ddyss.radio.models.domain.Track
 import com.t3ddyss.radio.utilities.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+
 
 class AudioPlaybackService : Service() {
     private lateinit var exoPlayer: SimpleExoPlayer
