@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Splash screen. -->
     <style name="SplashScreenTheme" parent="Theme.Radio">
         <item name="android:windowBackground">@drawable/layout_splash_screen</item>

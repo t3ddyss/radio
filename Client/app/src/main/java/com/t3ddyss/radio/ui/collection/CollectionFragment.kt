@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.util.Preconditions
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,11 +13,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.t3ddyss.radio.R
 import com.t3ddyss.radio.adapters.CollectionAdapter
 import com.t3ddyss.radio.databinding.FragmentCollectionBinding
-import com.t3ddyss.radio.models.domain.Error
-import com.t3ddyss.radio.models.domain.Failed
-import com.t3ddyss.radio.models.domain.Loading
-import com.t3ddyss.radio.models.domain.Playlist
-import com.t3ddyss.radio.models.domain.Success
+import com.t3ddyss.radio.models.domain.*
 
 class CollectionFragment : Fragment() {
     private val viewModel by viewModels<CollectionViewModel>()

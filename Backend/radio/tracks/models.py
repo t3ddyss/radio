@@ -14,7 +14,7 @@ class Track(db.Model):
     playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id', ondelete='CASCADE'), nullable=False)
 
     def get_uri(self):
-        return f'{self.artist}_{self.title}_{self.id}.mp3'.replace(" ", "_")
+        return f'{self.artist}_{self.title}_{self.id}'.replace(" ", "_")
 
     def to_dict(self, url_root):
         return {'id': self.id,

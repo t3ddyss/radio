@@ -25,10 +25,12 @@
         android:layout_marginStart="@dimen/fragment_horizontal_margin"
         android:layout_marginEnd="@dimen/fragment_horizontal_margin"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintEnd_toStartOf="@id/textView_length"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/audio_icon"
+        app:layout_constraintEnd_toStartOf="@id/textView_length"
         app:layout_constraintTop_toBottomOf="@id/textView_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.0"
         tools:text="Rammstein" />
 
     <TextView
@@ -47,9 +49,10 @@
         android:layout_width="@dimen/audio_icon_size"
         android:layout_height="@dimen/audio_icon_size"
         android:layout_margin="@dimen/fragment_horizontal_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_artist"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView_title"
         app:srcCompat="@drawable/ic_audiotrack"
-        app:tint="?colorSecondary" />
+        app:tint="?colorSecondary"
+        tools:ignore="ContentDescription"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

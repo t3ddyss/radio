@@ -3,8 +3,6 @@ package com.t3ddyss.radio.utilities
 import android.content.Context
 import android.util.TypedValue
 import androidx.annotation.AttrRes
-import androidx.core.graphics.BlendModeColorFilterCompat
-import androidx.core.graphics.BlendModeCompat
 
 fun Context.getThemeColor(@AttrRes res: Int): Int {
     val typedValue = TypedValue()

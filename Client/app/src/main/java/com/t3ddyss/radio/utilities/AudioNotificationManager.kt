@@ -3,7 +3,6 @@ package com.t3ddyss.radio.utilities
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.support.v4.media.session.MediaSessionCompat
 import com.google.android.exoplayer2.DefaultControlDispatcher
 import com.google.android.exoplayer2.Player

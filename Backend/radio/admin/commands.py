@@ -1,12 +1,14 @@
 import os
+from shutil import copy2
 from time import strftime, gmtime
 
 import click
-from shutil import copy2
 from flask import Blueprint, current_app
-from mutagen.easyid3 import EasyID3
-from mutagen.mp3 import MP3
+from mutagen.mp3 import MP3, HeaderNotFoundError
 from sqlalchemy.exc import IntegrityError
+from magic import from_file
+from mutagen.easyid3 import EasyID3
+from mutagen.id3 import ID3NoHeaderError
 
 from radio import db
 from radio.playlists.models import Playlist
@@ -60,9 +62,18 @@ def read_tracks_in_playlist():
 @blueprint.cli.command('add-track')
 @click.argument('audio_path', nargs=1)
 def add_track_to_playlist(audio_path):
-    filename, file_extension = os.path.splitext(audio_path)
-    if file_extension != '.mp3':
-        print('Only .mp3 files are supported')
+    mimetype = from_file(audio_path, mime=True).split('/')
+    print(mimetype[1])
+
+    if mimetype[0] != 'audio':
+        print('Not an audio file')
+        return
+
+    try:
+        audio = MP3(audio_path)
+        audio_metadata = EasyID3(audio_path)
+    except (HeaderNotFoundError, ID3NoHeaderError):
+        print('Only ".mp3" files with ID3 metadata are currently supported')
         return
 
     playlist = get_selected_playlist(action='modify')
@@ -71,11 +82,10 @@ def add_track_to_playlist(audio_path):
     def convert_length(length):
         return strftime("%M:%S", gmtime(length))
 
-    audio = EasyID3(audio_path)
     try:
-        track = Track(artist=audio['artist'][0],
-                      title=audio['title'][0],
-                      length=convert_length(MP3(audio_path).info.length))
+        track = Track(artist=audio_metadata['artist'][0],
+                      title=audio_metadata['title'][0],
+                      length=convert_length(audio.info.length))
 
         playlist.tracks.append(track)
         db.session.flush()
