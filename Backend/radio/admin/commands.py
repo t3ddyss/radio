@@ -23,6 +23,8 @@ def create_db():
     db.create_all()
     db.session.commit()
 
+    print('Database tables were successfully created')
+
 
 @blueprint.cli.command('read-playlists')
 def read_playlists():
