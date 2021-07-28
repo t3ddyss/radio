@@ -17,6 +17,13 @@ from radio.tracks.models import Track
 blueprint = Blueprint('admin', __name__)
 
 
+@blueprint.cli.command("create-db")
+def create_db():
+    db.drop_all()
+    db.create_all()
+    db.session.commit()
+
+
 @blueprint.cli.command('read-playlists')
 def read_playlists():
     print("Playlists:")
@@ -63,7 +70,6 @@ def read_tracks_in_playlist():
 @click.argument('audio_path', nargs=1)
 def add_track_to_playlist(audio_path):
     mimetype = from_file(audio_path, mime=True).split('/')
-    print(mimetype[1])
 
     if mimetype[0] != 'audio':
         print('Not an audio file')
