@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3'
 
 services:
   api:
@@ -7,7 +7,7 @@ services:
       - db
     image: radio:latest
     container_name: radio_api
-    command: gunicorn --bind 0.0.0.0:5000 run:app
+    command: gunicorn --bind 0.0.0.0:5000 run:app --workers=8 --worker-class=eventlet
     ports:
       - 5000:5000
     env_file: ./web.dev.env
