@@ -7,13 +7,9 @@ import com.t3ddyss.radio.data.RadioRepository
 import com.t3ddyss.radio.models.domain.Loading
 import javax.inject.Inject
 
-class CollectionViewModel: ViewModel() {
-    @Inject
-    lateinit var repository: RadioRepository
-
-    init {
-        MainApplication.instance.appComponent.inject(this)
-    }
+class CollectionViewModel(
+    private val repository: RadioRepository
+): ViewModel() {
 
     val playlists = liveData {
         emit(Loading())

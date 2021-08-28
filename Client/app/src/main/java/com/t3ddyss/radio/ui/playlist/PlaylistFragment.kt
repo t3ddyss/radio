@@ -1,5 +1,6 @@
 package com.t3ddyss.radio.ui.playlist
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.t3ddyss.radio.MainActivity
+import com.t3ddyss.radio.MainApplication
 import com.t3ddyss.radio.PlaybackViewModel
 import com.t3ddyss.radio.R
 import com.t3ddyss.radio.adapters.TracksAdapter
@@ -20,6 +22,7 @@ import com.t3ddyss.radio.databinding.FragmentPlaylistBinding
 import com.t3ddyss.radio.models.domain.*
 import com.t3ddyss.radio.ui.collection.CollectionFragment
 import com.t3ddyss.radio.utilities.PLAYLIST_ID
+import javax.inject.Inject
 
 class PlaylistFragment : Fragment() {
     private val playlistId by lazy {
@@ -27,9 +30,13 @@ class PlaylistFragment : Fragment() {
     }
 
     private val viewModel by viewModels<PlaylistViewModel> {
-        PlaylistViewModelFactory(playlistId)
+        PlaylistViewModel.provideFactory(
+            assistedViewModelFactory,
+            playlistId
+        )
     }
-
+    @Inject
+    lateinit var assistedViewModelFactory: PlaylistViewModel.PlaylistViewModelFactory
     private val playbackViewModel by activityViewModels<PlaybackViewModel>()
 
     private var _binding: FragmentPlaylistBinding? = null
@@ -37,6 +44,11 @@ class PlaylistFragment : Fragment() {
 
     private lateinit var adapter: TracksAdapter
     private lateinit var layoutManager: LinearLayoutManager
+
+    override fun onAttach(context: Context) {
+        MainApplication.instance.appComponent.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -1,5 +1,6 @@
 package com.t3ddyss.radio.ui.collection
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,18 +11,27 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import com.google.android.material.tabs.TabLayoutMediator
+import com.t3ddyss.radio.MainApplication
 import com.t3ddyss.radio.R
 import com.t3ddyss.radio.adapters.CollectionAdapter
 import com.t3ddyss.radio.databinding.FragmentCollectionBinding
 import com.t3ddyss.radio.models.domain.*
+import javax.inject.Inject
 
 class CollectionFragment : Fragment() {
-    private val viewModel by viewModels<CollectionViewModel>()
+    private val viewModel by viewModels<CollectionViewModel> { viewModelFactory }
+    @Inject
+    lateinit var viewModelFactory: CollectionViewModelFactory
 
     private var _binding: FragmentCollectionBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var adapter: CollectionAdapter
+
+    override fun onAttach(context: Context) {
+        MainApplication.instance.appComponent.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

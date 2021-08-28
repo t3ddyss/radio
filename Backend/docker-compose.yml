@@ -9,7 +9,7 @@ services:
     container_name: radio_api
     command: gunicorn --bind 0.0.0.0:5000 run:app --workers=8 --worker-class=eventlet
     ports:
-      - 5000:5000
+      - "5000:5000"
     env_file: ./web.dev.env
   db:
     image: postgres:latest

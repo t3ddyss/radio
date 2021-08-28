@@ -1,25 +1,38 @@
 package com.t3ddyss.radio.ui.playlist
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
-import com.t3ddyss.radio.MainApplication
 import com.t3ddyss.radio.data.RadioRepository
 import com.t3ddyss.radio.models.domain.Loading
-import javax.inject.Inject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-class PlaylistViewModel(
-    private val playlistId: Int
+class PlaylistViewModel @AssistedInject constructor(
+    private val repository: RadioRepository,
+    @Assisted private val playlistId: Int,
 ) : ViewModel() {
-
-    @Inject
-    lateinit var repository: RadioRepository
-
-    init {
-        MainApplication.instance.appComponent.inject(this)
-    }
 
     val tracks = liveData {
         emit(Loading())
         emit(repository.getPlaylistTracks(playlistId))
+    }
+
+    @AssistedFactory
+    interface PlaylistViewModelFactory {
+        fun create(playlistId: Int): PlaylistViewModel
+    }
+
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        fun provideFactory(
+            assistedFactory: PlaylistViewModelFactory,
+            playlistId: Int
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(playlistId) as T
+            }
+        }
     }
 }
