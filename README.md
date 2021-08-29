@@ -1,3 +1,3 @@
 A simple audio streaming app that can play music in background.
 
-![photo_2021-08-28_20-35-45](https://user-images.githubusercontent.com/36851587/131226322-7d365158-3752-4131-ad9c-883c5e8850fa.png)
+<img src="https://user-images.githubusercontent.com/36851587/131251031-2cbb6aa3-efa9-49c6-861a-ee186d2e657c.jpg" height="640">
